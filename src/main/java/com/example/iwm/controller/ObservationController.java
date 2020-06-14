@@ -2,17 +2,16 @@ package com.example.iwm.controller;
 
 import com.example.iwm.mapper.IObservationMapper;
 import com.example.iwm.model.ObservationDTO;
+import com.example.iwm.model.ObservationType;
 import com.example.iwm.server.ObservationClient;
 import com.google.gson.Gson;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Observation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,9 +43,15 @@ public class ObservationController {
                                              @PathVariable("id") String patient_id) {
         date_from = date_from == null ? "" : date_from;
         date_to = date_to == null ? "" : date_to;
-        type = type.equals("weight") ? "29463-7" : "";
+        type = type.equals("weight") ? ObservationType.WEIGHT.getCode() : "";
         List<IBaseResource> resources = resources = observationClient.getObservationsByCodeAndTimeRange(type, patient_id, date_from, date_to);
         return gson.toJson(mapToObservationDTO(resources));
+    }
+
+    @PostMapping(value = "/observation")
+    public String addNewWeightObservation(@RequestBody ObservationDTO observationDTO) {
+        ObservationDTO result = observationClient.createNewObservation(observationDTO);
+        return gson.toJson(result);
     }
 
     private List<ObservationDTO> mapToObservationDTO(List<IBaseResource> resources) {

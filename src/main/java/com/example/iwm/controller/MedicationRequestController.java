@@ -29,13 +29,6 @@ public class MedicationRequestController {
         this.medicationRequestMapper = medicationRequestMapper;
     }
 
-//    @GetMapping(value = "/medicamentrequest/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public String getObservationById(@PathVariable("id") String id, @RequestParam(value = "version", required = false) String version) {
-//        MedicationRequest medicationRequest = (version == null || version == "") ? medicationRequestClient.getResourceById(id) : medicationRequestClient.getResourceByIdAndVersion(id, version);
-//        MedicationRequestDTO medicationRequestDTO = medicationRequestMapper.fromMedicationRequest(medicationRequest);
-//        return gson.toJson(medicationRequestDTO);
-//    }
-
     @GetMapping(value = "/medicament/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public String getObservationsByTimeRange(@PathVariable("id") String patient_id,
                                              @RequestParam(value = "from", required = false) String date_from,
