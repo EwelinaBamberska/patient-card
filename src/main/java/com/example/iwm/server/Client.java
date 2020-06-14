@@ -1,11 +1,13 @@
 package com.example.iwm.server;
 
 
+import ca.uhn.fhir.rest.gclient.IQuery;
 import ca.uhn.fhir.util.BundleUtil;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Observation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,19 @@ public class Client<T extends IBaseResource> implements IClient{
                 .withId(new IdType(type.getTypeName(), id, version))
                 .execute();
         return results;
+    }
+
+    @Override
+    public IQuery<IBaseBundle> addTimeRangeToQuery(String date_from, String date_to, IQuery query) {
+        if(!date_from.equals("") && !date_to.equals("")) {
+            query.where(Observation.DATE.afterOrEquals().day(date_from));
+            query.and(Observation.DATE.beforeOrEquals().day(date_to));
+        } else if(!date_from.equals("")) {
+            query.where(Observation.DATE.afterOrEquals().day(date_from));
+        } else if(!date_to.equals("")) {
+            query.where(Observation.DATE.beforeOrEquals().day(date_from));
+        }
+        return query;
     }
 
     @Override
