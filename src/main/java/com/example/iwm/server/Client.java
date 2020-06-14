@@ -40,19 +40,6 @@ public class Client<T extends IBaseResource> implements IClient{
     }
 
     @Override
-    public IQuery<IBaseBundle> addTimeRangeToQuery(String date_from, String date_to, IQuery query) {
-        if(!date_from.equals("") && !date_to.equals("")) {
-            query.where(Observation.DATE.afterOrEquals().day(date_from));
-            query.and(Observation.DATE.beforeOrEquals().day(date_to));
-        } else if(!date_from.equals("")) {
-            query.where(Observation.DATE.afterOrEquals().day(date_from));
-        } else if(!date_to.equals("")) {
-            query.where(Observation.DATE.beforeOrEquals().day(date_from));
-        }
-        return query;
-    }
-
-    @Override
     public List<IBaseResource> readObjectsFromBundle(Bundle result) {
         List<IBaseResource> resources = new ArrayList<>();
         resources.addAll(BundleUtil.toListOfResources(server.getContext(), result));

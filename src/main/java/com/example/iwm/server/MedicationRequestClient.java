@@ -32,7 +32,15 @@ public class MedicationRequestClient {
                 .search()
                 .forResource(MedicationRequest.class)
                 .where(MedicationRequest.SUBJECT.hasId(patient_id));
-        query = client.addTimeRangeToQuery(date_from, date_to, query);
+
+        if(!date_from.equals("") && !date_to.equals("")) {
+            query.where(MedicationRequest.AUTHOREDON.afterOrEquals().day(date_from));
+            query.and(MedicationRequest.AUTHOREDON.beforeOrEquals().day(date_to));
+        } else if(!date_from.equals("")) {
+            query.where(MedicationRequest.AUTHOREDON.afterOrEquals().day(date_from));
+        } else if(!date_to.equals("")) {
+            query.where(MedicationRequest.AUTHOREDON.beforeOrEquals().day(date_to));
+        }
         Bundle results = query
                 .returnBundle(Bundle.class)
                 .encodedJson()

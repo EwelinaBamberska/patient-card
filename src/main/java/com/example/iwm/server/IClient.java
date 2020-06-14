@@ -13,6 +13,4 @@ public interface IClient<T extends IBaseResource> {
     List<IBaseResource> readObjectsFromBundle(Bundle result);
 
     T getResourceByIdAndVersion(String id, String version);
-
-    IQuery<IBaseBundle> addTimeRangeToQuery(String date_from, String date_to, IQuery<IBaseBundle> query);
 }

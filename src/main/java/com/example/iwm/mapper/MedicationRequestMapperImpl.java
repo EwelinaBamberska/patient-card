@@ -1,10 +1,16 @@
 package com.example.iwm.mapper;
 
+import com.example.iwm.model.DosageInstructionDTO;
+import com.example.iwm.model.DoseAndRateDTO;
 import com.example.iwm.model.MedicationRequestDTO;
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.Dosage;
 import org.hl7.fhir.r4.model.MedicationRequest;
+import org.hl7.fhir.r4.model.Timing;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 @Component
 public class MedicationRequestMapperImpl implements IMedicationRequestMapper {
@@ -15,43 +21,49 @@ public class MedicationRequestMapperImpl implements IMedicationRequestMapper {
         MedicationRequestDTO dto = new MedicationRequestDTO();
         dto.setId(medicationRequest.getIdElement().getIdPart());
         dto.setVersion(medicationRequest.getIdElement().getVersionIdPart());
-        dto.setStatus(medicationRequest.getStatus() == null ? null : medicationRequest.getStatus().getDisplay());
-        dto.setReason(medicationRequest.getStatus() == null ? null : medicationRequest.getStatus().getDisplay());
-        dto.setIntent(medicationRequest.getIntent() == null ? null : medicationRequest.getIntent().getDisplay());
-        dto.setCategory(medicationRequest.getCategoryFirstRep() == null ? null : medicationRequest.getCategoryFirstRep().getText());
-        dto.setPriority(medicationRequest.getPriority() == null ? null : medicationRequest.getPriority().getDisplay());
-        dto.setPatientId(medicationRequest.getReportedReference() == null ? null : medicationRequest.getReportedReference().getId());
+        dto.setStatus(medicationRequest.hasStatus() ? medicationRequest.getStatus().getDisplay() : null);
+        dto.setCodeableConcept(medicationRequest.hasMedicationCodeableConcept() ? medicationRequest.getMedicationCodeableConcept().getText() : null);
+        dto.setIntent(medicationRequest.hasIntent() ? medicationRequest.getIntent().getDisplay() : null);
+        dto.setRequester(medicationRequest.hasRequester() ? medicationRequest.getRequester().getDisplay() : null);
+        dto.setPatientId(medicationRequest.hasReportedReference() ? medicationRequest.getReportedReference().getId() : null);
         dto.setCreationDate(simpleDateFormat.format(medicationRequest.getAuthoredOn()));
-        dto.setNote(medicationRequest.getNoteFirstRep() == null ? null : medicationRequest.getNoteFirstRep().getText());
-        dto.setDosageInstruction(medicationRequest.getDosageInstructionFirstRep() == null ? null : medicationRequest.getDosageInstructionFirstRep().getText());
 
-        MedicationRequest.MedicationRequestDispenseRequestComponent dispenseRequestComponent = medicationRequest.getDispenseRequest();
-        if(dispenseRequestComponent != null) {
-            MedicationRequest.MedicationRequestDispenseRequestInitialFillComponent initialFill = dispenseRequestComponent.getInitialFill();
-            if(initialFill != null) {
-                dto.setFirstFillQuantity(initialFill.getQuantity() == null ? null :
-                        (initialFill.getQuantity().getValue() == null ? null : initialFill.getQuantity().getValue().toString()));
-                dto.setFirstFillDuration(initialFill.getDuration() == null ? null :
-                        (initialFill.getDuration().getValue() == null ? null : initialFill.getDuration().getValue().toString()));
+        if(medicationRequest.hasDosageInstruction()) {
+            List<Dosage> dosages = medicationRequest.getDosageInstruction();
+            for (Dosage d:
+                 dosages) {
+                dto.getDosageInstructionDTOList().add(toDosageInstructionDTO(d));
             }
-            dto.setDispenseInterval(dispenseRequestComponent.getDispenseInterval() == null ? null :
-                    (dispenseRequestComponent.getDispenseInterval().getValue() == null ? null : dispenseRequestComponent.getDispenseInterval().getValue().toString()));
-            dto.setValidityPeriodStartDate(dispenseRequestComponent.getValidityPeriod() == null ? null :
-                    (dispenseRequestComponent.getValidityPeriod().getStart() == null ? null :
-                    simpleDateFormat.format(dispenseRequestComponent.getValidityPeriod().getStart())));
-            dto.setValidityPeriodEndDate(dispenseRequestComponent.getValidityPeriod() == null ? null :
-                    (dispenseRequestComponent.getValidityPeriod().getEnd() == null ? null :
-                            simpleDateFormat.format(dispenseRequestComponent.getValidityPeriod().getEnd())));
-            dto.setNumberOfRepeatsAllowed(String.valueOf(dispenseRequestComponent.getNumberOfRepeatsAllowed()));
-            dto.setQuantity(dispenseRequestComponent.getQuantity() == null ? null :
-                    (dispenseRequestComponent.getQuantity().getValue() == null ? null : dispenseRequestComponent.getQuantity().getValue().toString()));
-            dto.setExpectedSupplyDuration(dispenseRequestComponent.getExpectedSupplyDuration() == null ? null :
-                    dispenseRequestComponent.getExpectedSupplyDuration().getValue() == null ? null : dispenseRequestComponent.getExpectedSupplyDuration().getValue().toString());
         }
-        dto.setSubstitutionAllowed(medicationRequest.getSubstitution() == null ? null :
-                (medicationRequest.getSubstitution().getAllowed() == null ? null : medicationRequest.getSubstitution().getAllowed().toString()));
-        dto.setSubstitutionReason(medicationRequest.getSubstitution() == null ? null :
-                (medicationRequest.getSubstitution().getReason() == null ? null : medicationRequest.getSubstitution().getReason().getText()));
+
+        return dto;
+    }
+
+    private DosageInstructionDTO toDosageInstructionDTO(Dosage d) {
+        DosageInstructionDTO dto = new DosageInstructionDTO();
+        dto.setSequence(d.hasSequence() ? String.valueOf(d.getSequence()) : null);
+        if(d.hasTiming() && d.getTiming().hasRepeat()) {
+            Timing.TimingRepeatComponent repeat = d.getTiming().getRepeat();
+            dto.setFrequency(repeat.hasFrequency() ? String.valueOf(repeat.getFrequency()) : null);
+            dto.setPeriod(repeat.hasPeriod() ? String.valueOf(repeat.getPeriod()) : null);
+            dto.setPeriodUnit(repeat.hasPeriodUnit() ? repeat.getPeriodUnit().getDisplay() : null);
+        }
+        if(d.hasDoseAndRate()) {
+            List<Dosage.DosageDoseAndRateComponent> doseAndRate = d.getDoseAndRate();
+            for (Dosage.DosageDoseAndRateComponent dar:
+                 doseAndRate) {
+                DoseAndRateDTO darDto = new DoseAndRateDTO();
+                darDto.setDoseQuantity(dar.hasDoseQuantity() ? dar.getDoseQuantity().getDisplay() : null);
+                if(dar.hasType() && dar.getType().hasCoding()) {
+                    List<Coding> types = dar.getType().getCoding();
+                    for (Coding code:
+                         types) {
+                        darDto.getDoseRateType().add(code.getDisplay());
+                    }
+                }
+                dto.getDoseAndRate().add(darDto);
+            }
+        }
         return dto;
     }
 }

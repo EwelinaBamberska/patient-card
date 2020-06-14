@@ -33,7 +33,15 @@ public class ObservationClient {
                 .forResource(Observation.class)
                 .where(Observation.PATIENT.hasId(patientId))
                 .where(Observation.CODE.exactly().code(type));
-        query = client.addTimeRangeToQuery(date_from, date_to, query);
+
+        if(!date_from.equals("") && !date_to.equals("")) {
+            query.where(Observation.DATE.afterOrEquals().day(date_from));
+            query.and(Observation.DATE.beforeOrEquals().day(date_to));
+        } else if(!date_from.equals("")) {
+            query.where(Observation.DATE.afterOrEquals().day(date_from));
+        } else if(!date_to.equals("")) {
+            query.where(Observation.DATE.beforeOrEquals().day(date_to));
+        }
 
         Bundle results = query
                 .returnBundle(Bundle.class)
