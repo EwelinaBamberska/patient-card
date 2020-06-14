@@ -1,0 +1,41 @@
+<mat-tab-group>
+  <mat-tab label="Waga">
+    <div class="display-flex">
+      <div class="chart-container">
+        <canvas
+          baseChart
+          width="600"
+          height="600"
+          [datasets]="lineChartData"
+          [labels]="lineChartLabels"
+          [options]="lineChartOptions"
+          [colors]="lineChartColors"
+          [legend]="lineChartLegend"
+          [chartType]="lineChartType"
+        ></canvas>
+      </div>
+      <div class="date-container">
+        <p>Wybierz przedział czasowy</p>
+        <div>
+          <mat-form-field>
+            <mat-label>Data od</mat-label>
+            <input matInput [matDatepicker]="dateFrom" disabled (dateChange)="changeDateFrom($event)">
+            <mat-datepicker-toggle matSuffix [for]="dateFrom"></mat-datepicker-toggle>
+            <mat-datepicker #dateFrom disabled="false"></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field>
+            <mat-label>Data do</mat-label>
+            <input matInput [matDatepicker]="dateTo" disabled (dateChange)="changeDateTo($event)">
+            <mat-datepicker-toggle matSuffix [for]="dateTo"></mat-datepicker-toggle>
+            <mat-datepicker #dateTo disabled="false"></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab label="Leki">
+    <p>Leki</p>
+  </mat-tab>
+</mat-tab-group>

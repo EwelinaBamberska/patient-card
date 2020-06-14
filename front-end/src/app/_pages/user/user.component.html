@@ -1,0 +1,18 @@
+<div class="patient-details">
+  <div class="container" *ngIf="patient">
+    <div class="left">
+      <p>{{ patient.name }}</p>
+      <p class="text-light">Płeć: {{ patient.gender }}</p>
+    </div>
+    <div class="right">
+      <p class="text-light">Data urodzenia</p>
+      <p class="text-light-gray">{{ patient.birthDate }}</p>
+    </div>
+  </div>
+</div>
+
+<div class="patient-content">
+  <div class="container">
+    <router-outlet></router-outlet>
+  </div>
+</div>

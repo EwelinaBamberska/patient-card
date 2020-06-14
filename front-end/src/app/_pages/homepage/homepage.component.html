@@ -1,0 +1,14 @@
+<div class="container">
+  <div class="search">
+    <i class="fas fa-search"></i>
+    <input type="text" placeholder="Szukaj pacjenta..." #input />
+  </div>
+  <div class="results-container">
+    <div class="result" *ngFor="let patient of patientList">
+      <a [routerLink]="'/user/' + patient.id"
+        ><p>{{ patient.name }}</p>
+        <span>Data urodzenia: {{ patient.birthDate }}</span>
+      </a>
+    </div>
+  </div>
+</div>
