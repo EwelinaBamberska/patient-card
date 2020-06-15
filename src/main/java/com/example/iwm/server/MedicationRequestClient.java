@@ -1,6 +1,8 @@
 package com.example.iwm.server;
 
 import ca.uhn.fhir.rest.gclient.IQuery;
+import com.example.iwm.model.DosageInstructionDTO;
+import com.example.iwm.model.MedicationRequestDTO;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
@@ -47,6 +49,21 @@ public class MedicationRequestClient {
                 .execute();
 
         return client.readObjectsFromBundle(results);
+    }
+
+    public MedicationRequestDTO updateMedicationRequest(MedicationRequestDTO dto) {
+        MedicationRequest medicationRequest = getResourceById(dto.getId());
+
+        List<DosageInstructionDTO> dosages = dto.getDosageInstruction();
+
+        if (dto.getDosageInstruction().size() != 0) {
+            for (DosageInstructionDTO dosage:
+                 dosages) {
+
+            }
+        }
+
+        return null;
     }
 
 }

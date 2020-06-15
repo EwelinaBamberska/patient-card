@@ -32,7 +32,7 @@ public class MedicationRequestMapperImpl implements IMedicationRequestMapper {
             List<Dosage> dosages = medicationRequest.getDosageInstruction();
             for (Dosage d:
                  dosages) {
-                dto.getDosageInstructionDTOList().add(toDosageInstructionDTO(d));
+                dto.getDosageInstruction().add(toDosageInstructionDTO(d));
             }
         }
 
