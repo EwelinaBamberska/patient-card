@@ -3,12 +3,10 @@ package com.example.iwm.mapper;
 import com.example.iwm.model.DosageInstructionDTO;
 import com.example.iwm.model.DoseAndRateDTO;
 import com.example.iwm.model.MedicationRequestDTO;
-import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.Dosage;
-import org.hl7.fhir.r4.model.MedicationRequest;
-import org.hl7.fhir.r4.model.Timing;
+import org.hl7.fhir.r4.model.*;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -39,6 +37,39 @@ public class MedicationRequestMapperImpl implements IMedicationRequestMapper {
         return dto;
     }
 
+    @Override
+    public MedicationRequest fromMedicationRequestDTO(MedicationRequestDTO dto) {
+        MedicationRequest medicationRequest = new MedicationRequest();
+
+        for(DosageInstructionDTO dosageDTO : dto.getDosageInstruction()) {
+            medicationRequest.getDosageInstruction().add(toDosage(dosageDTO));
+        }
+
+        return medicationRequest;
+    }
+
+    private Dosage toDosage(DosageInstructionDTO dosageDTO) {
+        Dosage dosage = new Dosage();
+        List<DoseAndRateDTO> doses = dosageDTO.getDoseAndRate();
+
+        for (DoseAndRateDTO dose : doses) {
+            Dosage.DosageDoseAndRateComponent mDosage = new Dosage.DosageDoseAndRateComponent();
+
+            mDosage.setDose(dose.getDoseQuantity() != null ? new Quantity().setValue(new BigDecimal(dose.getDoseQuantity())) : null);
+
+            for (String type : dose.getDoseRateType()) {
+                mDosage.getType().getCoding().add(new Coding().setCode(type));
+            }
+            dosage.getDoseAndRate().add(mDosage);
+        }
+
+        dosage.getTiming().getRepeat().setFrequency(Integer.valueOf(dosageDTO.getFrequency()))
+                .setPeriodUnit(Timing.UnitsOfTime.fromCode(dosageDTO.getPeriodUnit()))
+                .setPeriod(new BigDecimal(dosageDTO.getPeriod()));
+        dosage.setSequence(Integer.valueOf(dosageDTO.getSequence()));
+        return dosage;
+    }
+
     private DosageInstructionDTO toDosageInstructionDTO(Dosage d) {
         DosageInstructionDTO dto = new DosageInstructionDTO();
         dto.setSequence(d.hasSequence() ? String.valueOf(d.getSequence()) : null);
@@ -46,7 +77,7 @@ public class MedicationRequestMapperImpl implements IMedicationRequestMapper {
             Timing.TimingRepeatComponent repeat = d.getTiming().getRepeat();
             dto.setFrequency(repeat.hasFrequency() ? String.valueOf(repeat.getFrequency()) : null);
             dto.setPeriod(repeat.hasPeriod() ? String.valueOf(repeat.getPeriod()) : null);
-            dto.setPeriodUnit(repeat.hasPeriodUnit() ? repeat.getPeriodUnit().getDisplay() : null);
+            dto.setPeriodUnit(repeat.hasPeriodUnit() ? repeat.getPeriodUnit().getSystem() : null);
         }
         if(d.hasDoseAndRate()) {
             List<Dosage.DosageDoseAndRateComponent> doseAndRate = d.getDoseAndRate();

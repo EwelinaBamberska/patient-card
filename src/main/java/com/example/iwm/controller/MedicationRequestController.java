@@ -8,10 +8,7 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.MedicationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,5 +43,12 @@ public class MedicationRequestController {
             observationDTOS.add(medicationRequestMapper.fromMedicationRequest((MedicationRequest) resource));
         }
         return observationDTOS;
+    }
+
+    @PostMapping(value = "/medication")
+    public String addNewWeightObservation(@RequestBody MedicationRequestDTO medicationRequestDTO) {
+        MedicationRequestDTO result = medicationRequestClient.updateMedicationRequest(medicationRequestDTO);
+        System.out.println(result.getId() +  " " + result.getVersion());
+        return gson.toJson(result);
     }
 }
