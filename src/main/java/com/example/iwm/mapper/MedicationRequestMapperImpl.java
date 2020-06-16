@@ -40,11 +40,10 @@ public class MedicationRequestMapperImpl implements IMedicationRequestMapper {
     @Override
     public MedicationRequest fromMedicationRequestDTO(MedicationRequestDTO dto) {
         MedicationRequest medicationRequest = new MedicationRequest();
-
+        medicationRequest.getDosageInstruction().clear();
         for(DosageInstructionDTO dosageDTO : dto.getDosageInstruction()) {
             medicationRequest.getDosageInstruction().add(toDosage(dosageDTO));
         }
-
         return medicationRequest;
     }
 
@@ -54,17 +53,10 @@ public class MedicationRequestMapperImpl implements IMedicationRequestMapper {
 
         for (DoseAndRateDTO dose : doses) {
             Dosage.DosageDoseAndRateComponent mDosage = new Dosage.DosageDoseAndRateComponent();
-
             mDosage.setDose(dose.getDoseQuantity() != null ? new Quantity().setValue(new BigDecimal(dose.getDoseQuantity())) : null);
-
-            for (String type : dose.getDoseRateType()) {
-                mDosage.getType().getCoding().add(new Coding().setCode(type));
-            }
-            dosage.getDoseAndRate().add(mDosage);
         }
 
         dosage.getTiming().getRepeat().setFrequency(Integer.valueOf(dosageDTO.getFrequency()))
-                .setPeriodUnit(Timing.UnitsOfTime.fromCode(dosageDTO.getPeriodUnit()))
                 .setPeriod(new BigDecimal(dosageDTO.getPeriod()));
         dosage.setSequence(Integer.valueOf(dosageDTO.getSequence()));
         return dosage;
