@@ -34,14 +34,23 @@ export class PatientService {
   }
 
   getMedicamentHistory(id: string, from?: string, to?: string): Observable<IMedicament[]> {
+    const fromString = from && from.length > 0 ? `?from=${from}` : '';
+    const toString = to && to.length > 0 ? from && from.length > 0 ? `&to=${to}` : `?to=${to}` : '';
+
     return this.http.get<IMedicament[]>(
-      `${environment.host}medicament/${id}`
+      `${environment.host}medicament/${id}${fromString}${toString}`
     );
   }
 
   addWeight(data) {
     return this.http.post(
       `${environment.host}observation`, data
+    );
+  }
+
+  editMedication(data) {
+    return this.http.post(
+      `${environment.host}medication`, data
     );
   }
 }

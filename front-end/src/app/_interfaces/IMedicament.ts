@@ -10,13 +10,14 @@ export interface IMedicament {
 }
 
 export interface IDosage {
-  doseAndRate: IDoseAndRate[];
-  frequency: string;
-  period: string;
-  periodUnit: string;
-  sequence: string;
+  doseAndRate?: IDoseAndRate[];
+  frequency?: string;
+  period?: string;
+  periodUnit?: string;
+  sequence?: string;
 }
 
 export interface IDoseAndRate {
-  doseRateType: string[];
+  doseRateType?: string[];
+  doseQuantity?: string;
 }

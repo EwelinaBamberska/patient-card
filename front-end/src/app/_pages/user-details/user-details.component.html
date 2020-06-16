@@ -80,15 +80,15 @@
           <!-- <div class="" *ngFor="let instruction of medicament.dosageInstruction"> -->
             <div class="editable-field">
               <span class="text-light-gray">Częstotliwość:</span>
-              <div class="dose-content" *ngIf="!editing[i].frequency">
+              <div class="dose-content" *ngIf="!editing[i].frequence">
                 <span *ngIf="medicament?.dosageInstruction[0]?.frequence">{{ medicament.dosageInstruction[0].frequence }}</span>
                 <span *ngIf="!medicament?.dosageInstruction[0]?.frequence"><i class="text-light-gray">Nie ustawiono</i></span>
-                <button (click)="startEditing(i, 'frequency')"><i class="fas fa-pencil-alt"></i></button>
+                <button (click)="startEditing(i, 'frequence')"><i class="fas fa-pencil-alt"></i></button>
               </div>
-              <div class="dose-textarea" *ngIf="editing[i].frequency">
+              <div class="dose-textarea" *ngIf="editing[i].frequence">
                 <input #inputFrequency type="text" [value]="medicament?.dosageInstruction[0]?.frequence || ''" />
-                <button (click)="acceptEdit(medicament, i, 'frequency', inputFrequency.value)"><i class="fas fa-check"></i></button>
-                <button (click)="stopEditing(i, 'frequency')"><i class="fas fa-times"></i></button>
+                <button (click)="acceptEdit(medicament, i, 'frequence', inputFrequency.value)"><i class="fas fa-check"></i></button>
+                <button (click)="stopEditing(i, 'frequence')"><i class="fas fa-times"></i></button>
               </div>
             </div>
             <div class="editable-field">
@@ -100,11 +100,11 @@
               </div>
               <div class="dose-textarea" *ngIf="editing[i].period">
                 <input #inputPeriod type="text" [value]="medicament?.dosageInstruction[0]?.period || ''">
-                <button><i class="fas fa-check"></i></button>
+                <button (click)="acceptEdit(medicament, i, 'period', inputPeriod.value)"><i class="fas fa-check"></i></button>
                 <button (click)="stopEditing(i, 'period')"><i class="fas fa-times"></i></button>
               </div>
             </div>
-            <div class="editable-field">
+            <!-- <div class="editable-field">
               <span class="text-light-gray">Jednostka okresu:</span>
               <div class="dose-content" *ngIf="!editing[i].periodUnit">
                 <span *ngIf="medicament?.dosageInstruction[0]?.periodUnit">{{ medicament.dosageInstruction[0].periodUnit }}</span>
@@ -112,11 +112,11 @@
                 <button (click)="startEditing(i, 'periodUnit')"><i class="fas fa-pencil-alt"></i></button>
               </div>
               <div class="dose-textarea" *ngIf="editing[i].periodUnit">
-                <input #inputPeriodUnit type="text">
-                <button><i class="fas fa-check"></i></button>
+                <input #inputPeriodUnit type="text" [value]="medicament?.dosageInstruction[0]?.periodUnit || ''">
+                <button (click)="acceptEdit(medicament, i, 'periodUnit', inputPeriodUnit.value)"><i class="fas fa-check"></i></button>
                 <button (click)="stopEditing(i, 'periodUnit')"><i class="fas fa-times"></i></button>
               </div>
-            </div>
+            </div> -->
             <div class="editable-field">
               <span class="text-light-gray">Sekwencja:</span>
               <div class="dose-content" *ngIf="!editing[i].sequence">
@@ -125,12 +125,12 @@
                 <button (click)="startEditing(i, 'sequence')"><i class="fas fa-pencil-alt"></i></button>
               </div>
               <div class="dose-textarea" *ngIf="editing[i].sequence">
-                <input #inputSequence type="text">
-                <button><i class="fas fa-check"></i></button>
+                <input #inputSequence type="text" [value]="medicament?.dosageInstruction[0]?.sequence || ''">
+                <button (click)="acceptEdit(medicament, i, 'sequence', inputSequence.value)"><i class="fas fa-check"></i></button>
                 <button (click)="stopEditing(i, 'sequence')"><i class="fas fa-times"></i></button>
               </div>
             </div>
-            <div class="editable-field">
+            <!-- <div class="editable-field">
               <span class="text-light-gray">Rodzaj dawki (doseRateType):</span>
               <div class="dose-content" *ngIf="!editing[i].doseRateType">
                 <span *ngIf="medicament?.dosageInstruction[0]?.doseAndRate[0]?.doseRateType">{{ medicament.dosageInstruction[0].doseAndRate[0].doseRateType[0] }}</span>
@@ -139,11 +139,11 @@
              </div>
     
               <div class="dose-textarea" *ngIf="editing[i].doseRateType">
-                <input #inputDoseRate type="text" />
-                <button><i class="fas fa-check"></i></button>
+                <input #inputDoseRate type="text" [value]="medicament?.dosageInstruction[0]?.doseAndRate[0]?.doseRateType || ''"/>
+                <button (click)="acceptEdit(medicament, i, 'doseRateType', inputDoseRate.value)"><i class="fas fa-check"></i></button>
                 <button (click)="stopEditing(i, 'doseRateType')"><i class="fas fa-times"></i></button>
               </div>
-            </div>
+            </div> -->
             <div class="editable-field">
               <span class="text-light-gray">Ilość dawki:</span>
               <div class="dose-content" *ngIf="!editing[i].doseQuantity">
@@ -157,8 +157,8 @@
               </div>
     
               <div class="dose-textarea" *ngIf="editing[i].doseQuantity">
-                <input #inputDose type="text" />
-                <button><i class="fas fa-check"></i></button>
+                <input #inputDose type="text" [value]="medicament?.dosageInstruction[0]?.doseAndRate[0]?.doseQuantity || ''"/>
+                <button (click)="acceptEdit(medicament, i, 'doseQuantity', inputDose.value)"><i class="fas fa-check"></i></button>
                 <button (click)="stopEditing(i, 'doseQuantity')"><i class="fas fa-times"></i></button>
               </div> 
             </div>
@@ -170,7 +170,7 @@
         <div>
           <mat-form-field>
             <mat-label>Data od</mat-label>
-            <input matInput [matDatepicker]="dateFromMed" disabled (dateChange)="changeDateFrom($event)">
+            <input matInput [matDatepicker]="dateFromMed" disabled (dateChange)="changeDateFromMed($event)">
             <mat-datepicker-toggle matSuffix [for]="dateFromMed"></mat-datepicker-toggle>
             <mat-datepicker #dateFromMed disabled="false"></mat-datepicker>
           </mat-form-field>
@@ -178,7 +178,7 @@
         <div>
           <mat-form-field>
             <mat-label>Data do</mat-label>
-            <input matInput [matDatepicker]="dateToMed" disabled (dateChange)="changeDateTo($event)">
+            <input matInput [matDatepicker]="dateToMed" disabled (dateChange)="changeDateToMed($event)">
             <mat-datepicker-toggle matSuffix [for]="dateToMed"></mat-datepicker-toggle>
             <mat-datepicker #dateToMed disabled="false"></mat-datepicker>
           </mat-form-field>

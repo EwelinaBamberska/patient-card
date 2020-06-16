@@ -35,6 +35,9 @@ export class UserDetailsComponent implements OnInit {
   dateFrom: string;
   dateTo: string;
 
+  dateFromMeds: string;
+  dateToMeds: string;
+
   private id: string;
 
   medicaments: IMedicament[];
@@ -57,7 +60,7 @@ export class UserDetailsComponent implements OnInit {
 
       res.forEach(r => {
         this.editing.push({
-          frequency: false,
+          frequence: false,
           period: false,
           periodUnit: false,
           sequence: false,
@@ -103,6 +106,48 @@ export class UserDetailsComponent implements OnInit {
     });
   }
 
+  changeDateFromMed($event: MatDatepickerInputEvent<Date>) {
+    const datestring = this.convertDateToString($event.value);
+      
+    this.dateFromMeds = datestring;
+    this.service.getMedicamentHistory(this.id, this.dateFromMeds, this.dateToMeds).subscribe((res: IMedicament[]) => {
+      // this.parseToChartData(res);
+      this.medicaments = res;
+      this.editing = [];
+      res.forEach(r => {
+        this.editing.push({
+          frequence: false,
+          period: false,
+          periodUnit: false,
+          sequence: false,
+          doseRateType: false,
+          doseQuantity: false
+        })
+      })
+    });
+  }
+
+  changeDateToMed($event: MatDatepickerInputEvent<Date>) {
+    const datestring = this.convertDateToString($event.value);
+
+    this.dateToMeds = datestring;
+    this.service.getMedicamentHistory(this.id, this.dateFromMeds, this.dateToMeds).subscribe((res: IMedicament[]) => {
+      // this.parseToChartData(res);
+      this.medicaments = res;
+      this.editing = [];
+      res.forEach(r => {
+        this.editing.push({
+          frequence: false,
+          period: false,
+          periodUnit: false,
+          sequence: false,
+          doseRateType: false,
+          doseQuantity: false
+        })
+      })
+    });
+  }
+
   addWeight($event) {
     $event.preventDefault();
     if(this.addWeightForm.status === 'VALID') {
@@ -135,8 +180,42 @@ export class UserDetailsComponent implements OnInit {
     this.editing[i][value] = false;
   }
 
-  acceptEdit(object, i, value, newProperty) {
-    console.log({object, value, newProperty})
+  acceptEdit(obj: IMedicament, i, value, newProperty) {
+    // console.log("old", {obj, value, newProperty})
+    // let newObj = Object.assign({}, obj);//obj;
+    if( !obj.dosageInstruction || obj.dosageInstruction.length === 0 ) {
+      let newDosage = {};
+      if( value === "doseRateType" ) {
+        newDosage['doseAndRate'] = [{ 'doseRateType': [newProperty] }];
+      } else if( value === "doseQuantity" ) {
+        newDosage['doseAndRate'] = [{ 'doseQuantity': newProperty }];
+      } else {
+        newDosage[value] = newProperty;
+        newDosage['doseAndRate'] = [];
+      }
+
+      obj.dosageInstruction = [];
+      obj.dosageInstruction.push(newDosage);
+    } else if( value !== "doseRateType" && value !== "doseQuantity" ) {
+      obj.dosageInstruction[0][value] = newProperty;
+    } else if ( value === "doseRateType" ) {
+      obj.dosageInstruction[0]['doseAndRate'] = [{ 'doseRateType': [newProperty] }];
+    } else if( value === "doseQuantity" ) {
+      obj.dosageInstruction[0]['doseAndRate'] = [{ 'doseQuantity': newProperty }];
+    }
+    
+    this.editing[i][value] = false;
+
+    const dataToSend = {
+      id: obj.id,
+      dosageInstruction: obj.dosageInstruction
+    }
+
+    console.log(dataToSend)
+    // this.service.editMedication(dataToSend).subscribe(res => {
+    //   console.log(res);
+    // })
+    // console.log("new", {obj, value, newProperty})
   }
 
   round(num) {
@@ -156,7 +235,7 @@ export class UserDetailsComponent implements OnInit {
 }
 
 interface IDetailsEditing {
-  frequency: boolean;
+  frequence: boolean;
   period: boolean;
   periodUnit: boolean;
   sequence: boolean;
