@@ -53,4 +53,16 @@ export class PatientService {
       `${environment.host}medication`, data
     );
   }
+
+  getVersions(id) {
+    return this.http.get(
+      `${environment.host}medication/versions/${id}`
+    );
+  }
+
+  getMedicamentByVersion(id, version) {
+    return this.http.get(
+      `${environment.host}medication/${id}?version=${version}`
+    );
+  }
 }

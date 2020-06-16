@@ -8,6 +8,7 @@ E:\uczelnia\iwm-proj\repo\patient-card\src\main\java\com\example\iwm\server\Medi
 E:\uczelnia\iwm-proj\repo\patient-card\src\main\java\com\example\iwm\model\MedicationRequestDTO.java
 E:\uczelnia\iwm-proj\repo\patient-card\src\main\java\com\example\iwm\mapper\PatientMapperImpl.java
 E:\uczelnia\iwm-proj\repo\patient-card\src\main\java\com\example\iwm\controller\MedicationRequestController.java
+E:\uczelnia\iwm-proj\repo\patient-card\src\main\java\com\example\iwm\model\VersionDTO.java
 E:\uczelnia\iwm-proj\repo\patient-card\src\main\java\com\example\iwm\server\CustomServer.java
 E:\uczelnia\iwm-proj\repo\patient-card\src\main\java\com\example\iwm\model\DosageInstructionDTO.java
 E:\uczelnia\iwm-proj\repo\patient-card\src\main\java\com\example\iwm\mapper\IPatientMapper.java

@@ -83,7 +83,7 @@
               <div class="dose-content" *ngIf="!editing[i].frequence">
                 <span *ngIf="medicament?.dosageInstruction[0]?.frequence">{{ medicament.dosageInstruction[0].frequence }}</span>
                 <span *ngIf="!medicament?.dosageInstruction[0]?.frequence"><i class="text-light-gray">Nie ustawiono</i></span>
-                <button (click)="startEditing(i, 'frequence')"><i class="fas fa-pencil-alt"></i></button>
+                <button (click)="startEditing(i, 'frequence')" [disabled]="versions[i] && actualVersionIds[i] !== versions[i][versions[i].length - 1].version"><i class="fas fa-pencil-alt"></i></button>
               </div>
               <div class="dose-textarea" *ngIf="editing[i].frequence">
                 <input #inputFrequency type="text" [value]="medicament?.dosageInstruction[0]?.frequence || ''" />
@@ -96,7 +96,7 @@
               <div class="dose-content" *ngIf="!editing[i].period">
                 <span *ngIf="medicament?.dosageInstruction[0]?.period">{{ medicament.dosageInstruction[0].period }}</span>
                 <span *ngIf="!medicament?.dosageInstruction[0]?.period"><i class="text-light-gray">Nie ustawiono</i></span>
-                <button (click)="startEditing(i, 'period')"><i class="fas fa-pencil-alt"></i></button>
+                <button (click)="startEditing(i, 'period')" [disabled]="versions[i] && actualVersionIds[i] !== versions[i][versions[i].length - 1].version"><i class="fas fa-pencil-alt"></i></button>
               </div>
               <div class="dose-textarea" *ngIf="editing[i].period">
                 <input #inputPeriod type="text" [value]="medicament?.dosageInstruction[0]?.period || ''">
@@ -122,7 +122,7 @@
               <div class="dose-content" *ngIf="!editing[i].sequence">
                 <span *ngIf="medicament?.dosageInstruction[0]?.sequence">{{ medicament.dosageInstruction[0].sequence }}</span>
                 <span *ngIf="!medicament?.dosageInstruction[0]?.sequence"><i class="text-light-gray">Nie ustawiono</i></span>
-                <button (click)="startEditing(i, 'sequence')"><i class="fas fa-pencil-alt"></i></button>
+                <button (click)="startEditing(i, 'sequence')" [disabled]="versions[i] && actualVersionIds[i] !== versions[i][versions[i].length - 1].version"><i class="fas fa-pencil-alt"></i></button>
               </div>
               <div class="dose-textarea" *ngIf="editing[i].sequence">
                 <input #inputSequence type="text" [value]="medicament?.dosageInstruction[0]?.sequence || ''">
@@ -163,10 +163,17 @@
               </div> 
             </div> -->
           <!-- </div> -->
+          <h4>Wersje</h4>
+          <div class="version" *ngFor="let version of versions[i]">
+            <button (click)="changeVersion(medicament, version, i )">
+              Wersja {{ version.version }} &ndash; {{ version.creationDate }} 
+              <span *ngIf="version.version === actualVersionIds[i]"> --- aktywna</span>
+            </button>
+          </div>
         </div>
       </div>
       <div class="date-container">
-        <p>Wybierz przedział czasowy</p>
+        <h4>Wybierz przedział czasowy</h4>
         <div>
           <mat-form-field>
             <mat-label>Data od</mat-label>

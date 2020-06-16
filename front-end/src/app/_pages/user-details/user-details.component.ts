@@ -5,9 +5,10 @@ import { IObservation } from "src/app/_interfaces/IObservation";
 import { ChartDataSets, ChartOptions } from "chart.js";
 import { Color, Label } from "ng2-charts";
 import { MatDatepickerInputEvent } from '@angular/material';
-import { IMedicament } from 'src/app/_interfaces/IMedicament';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { numberValidator } from 'src/app/_helpers/validators';
+import { IVersion } from "../../_interfaces/IVersion";
+import { IMedicament } from "../../_interfaces/IMedicament";
 
 @Component({
   selector: "app-user-details",
@@ -43,6 +44,9 @@ export class UserDetailsComponent implements OnInit {
   medicaments: IMedicament[];
   addWeightForm: FormGroup;
   editing: IDetailsEditing[] = [];
+
+  versions: IVersion[][] = [];
+  actualVersionIds: string[] = [];
   
   ngOnInit() {
     this.addWeightForm = this.formBuilder.group({
@@ -66,7 +70,13 @@ export class UserDetailsComponent implements OnInit {
           sequence: false,
           doseRateType: false,
           doseQuantity: false
-        })
+        });
+
+        this.service.getVersions(r.id).subscribe((version: IVersion[]) => {
+          this.versions.push(version)
+          this.actualVersionIds.push(version[version.length - 1].version);
+          // console.log("VER", version)
+        });
       })
 
       console.log(res);
@@ -222,7 +232,28 @@ export class UserDetailsComponent implements OnInit {
 
     console.log(dataToSend)
     this.service.editMedication(dataToSend).subscribe(res => {
+      console.log("updated",res);
+
+      this.service.getVersions(obj.id).subscribe((versions: IVersion[]) => {
+        this.versions[i] = versions;
+        this.actualVersionIds[i] = versions[versions.length - 1].version;
+        // console.log("VER", version)
+      });
+    })
+  }
+
+  changeVersion(medicament: IMedicament, version: IVersion, i: number) {
+    console.log({medicament, version});
+    this.service.getMedicamentByVersion(medicament.id, version.version).subscribe((res: any) => {
       console.log(res);
+      this.medicaments[i] = res;
+      this.actualVersionIds[i] = version.version;
+
+      // this.service.getVersions(version.id).subscribe((versions: IVersion[]) => {
+      //   this.versions[i] = versions;
+      //   this.actualVersionIds[i] = versions[versions.length - 1].version;
+      //   // console.log("VER", version)
+      // });
     })
   }
 
