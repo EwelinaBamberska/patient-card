@@ -17,8 +17,10 @@ import {
   MatNativeDateModule,
   MatFormFieldModule,
   MatInputModule,
+  MatButtonModule,
 } from "@angular/material";
 import { ChartsModule } from "ng2-charts";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,7 @@ import { ChartsModule } from "ng2-charts";
     UserVersionsComponent,
     UserDetailsComponent,
     MenuComponent,
-    UserComponent,
+    UserComponent
   ],
   imports: [
     ChartsModule,
@@ -40,6 +42,8 @@ import { ChartsModule } from "ng2-charts";
     MatNativeDateModule,
     MatFormFieldModule,
     MatInputModule,
+    MatButtonModule,
+    ReactiveFormsModule, FormsModule
   ],
   providers: [MatDatepickerModule],
   bootstrap: [AppComponent],

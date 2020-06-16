@@ -2,20 +2,22 @@
   <mat-tab label="Waga">
     <div class="display-flex">
       <div class="chart-container">
-        <canvas
-          baseChart
-          width="600"
-          height="600"
-          [datasets]="lineChartData"
-          [labels]="lineChartLabels"
-          [options]="lineChartOptions"
-          [colors]="lineChartColors"
-          [legend]="lineChartLegend"
-          [chartType]="lineChartType"
-        ></canvas>
+        <div>
+          <canvas
+            baseChart
+            width="600"
+            height="600"
+            [datasets]="lineChartData"
+            [labels]="lineChartLabels"
+            [options]="lineChartOptions"
+            [colors]="lineChartColors"
+            [legend]="lineChartLegend"
+            [chartType]="lineChartType"
+          ></canvas>
+        </div>
       </div>
       <div class="date-container">
-        <p>Wybierz przedział czasowy</p>
+        <h4>Wybierz przedział czasowy</h4>
         <div>
           <mat-form-field>
             <mat-label>Data od</mat-label>
@@ -32,10 +34,156 @@
             <mat-datepicker #dateTo disabled="false"></mat-datepicker>
           </mat-form-field>
         </div>
+        
+        <h4>Dodaj nową obserwację</h4>
+        <div class="add-weight">
+          <form [formGroup]="addWeightForm" (submit)="addWeight($event)">
+            
+            <mat-form-field class="example-full-width">
+              <mat-label>Waga</mat-label>
+              <input 
+                matInput 
+                formControlName="weight"
+                placeholder="Waga"
+              >
+              <mat-error *ngIf="this.addWeightForm.get('weight').errors">
+                Waga jest niepoprawna
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Data</mat-label>
+              <input matInput [matDatepicker]="dateWeight" formControlName="date">
+              <mat-datepicker-toggle matSuffix [for]="dateWeight"></mat-datepicker-toggle>
+              <mat-datepicker #dateWeight disabled="false"></mat-datepicker>
+              <mat-error *ngIf="this.addWeightForm.get('date').errors">
+                Data jest wymagana
+              </mat-error>
+            </mat-form-field>
+            <!-- <button>Dodaj obserwację</button> -->
+            <button mat-raised-button color="primary">Dodaj obserwację</button>
+          </form>
+        </div>
       </div>
     </div>
   </mat-tab>
   <mat-tab label="Leki">
-    <p>Leki</p>
+    <div class="display-flex">
+      <div class="medicaments-container">
+        <div class="result" *ngFor="let medicament of medicaments; index as i">
+          <h4>Podstawowe informacje</h4>
+          <p><span class="text-light-gray">Data wystawienia:</span><span>{{ medicament.creationDate }}</span></p>
+          <p><span class="text-light-gray">Nazwa leku:</span><span>{{ medicament.codeableConcept }}</span></p>
+          <p><span class="text-light-gray">Wystawiający:</span><span>{{ medicament.requester }}</span></p>
+          <p><span class="text-light-gray">Status:</span><span>{{ medicament.status }}</span></p>
+          <h4>Dawkowanie</h4>
+          <!-- <div class="" *ngFor="let instruction of medicament.dosageInstruction"> -->
+            <div class="editable-field">
+              <span class="text-light-gray">Częstotliwość:</span>
+              <div class="dose-content" *ngIf="!editing[i].frequency">
+                <span *ngIf="medicament?.dosageInstruction[0]?.frequence">{{ medicament.dosageInstruction[0].frequence }}</span>
+                <span *ngIf="!medicament?.dosageInstruction[0]?.frequence"><i class="text-light-gray">Nie ustawiono</i></span>
+                <button (click)="startEditing(i, 'frequency')"><i class="fas fa-pencil-alt"></i></button>
+              </div>
+              <div class="dose-textarea" *ngIf="editing[i].frequency">
+                <input #inputFrequency type="text" [value]="medicament?.dosageInstruction[0]?.frequence || ''" />
+                <button (click)="acceptEdit(medicament, i, 'frequency', inputFrequency.value)"><i class="fas fa-check"></i></button>
+                <button (click)="stopEditing(i, 'frequency')"><i class="fas fa-times"></i></button>
+              </div>
+            </div>
+            <div class="editable-field">
+              <span class="text-light-gray">Okres:</span>
+              <div class="dose-content" *ngIf="!editing[i].period">
+                <span *ngIf="medicament?.dosageInstruction[0]?.period">{{ medicament.dosageInstruction[0].period }}</span>
+                <span *ngIf="!medicament?.dosageInstruction[0]?.period"><i class="text-light-gray">Nie ustawiono</i></span>
+                <button (click)="startEditing(i, 'period')"><i class="fas fa-pencil-alt"></i></button>
+              </div>
+              <div class="dose-textarea" *ngIf="editing[i].period">
+                <input #inputPeriod type="text" [value]="medicament?.dosageInstruction[0]?.period || ''">
+                <button><i class="fas fa-check"></i></button>
+                <button (click)="stopEditing(i, 'period')"><i class="fas fa-times"></i></button>
+              </div>
+            </div>
+            <div class="editable-field">
+              <span class="text-light-gray">Jednostka okresu:</span>
+              <div class="dose-content" *ngIf="!editing[i].periodUnit">
+                <span *ngIf="medicament?.dosageInstruction[0]?.periodUnit">{{ medicament.dosageInstruction[0].periodUnit }}</span>
+                <span *ngIf="!medicament?.dosageInstruction[0]?.periodUnit"><i class="text-light-gray">Nie ustawiono</i></span>
+                <button (click)="startEditing(i, 'periodUnit')"><i class="fas fa-pencil-alt"></i></button>
+              </div>
+              <div class="dose-textarea" *ngIf="editing[i].periodUnit">
+                <input #inputPeriodUnit type="text">
+                <button><i class="fas fa-check"></i></button>
+                <button (click)="stopEditing(i, 'periodUnit')"><i class="fas fa-times"></i></button>
+              </div>
+            </div>
+            <div class="editable-field">
+              <span class="text-light-gray">Sekwencja:</span>
+              <div class="dose-content" *ngIf="!editing[i].sequence">
+                <span *ngIf="medicament?.dosageInstruction[0]?.sequence">{{ medicament.dosageInstruction[0].sequence }}</span>
+                <span *ngIf="!medicament?.dosageInstruction[0]?.sequence"><i class="text-light-gray">Nie ustawiono</i></span>
+                <button (click)="startEditing(i, 'sequence')"><i class="fas fa-pencil-alt"></i></button>
+              </div>
+              <div class="dose-textarea" *ngIf="editing[i].sequence">
+                <input #inputSequence type="text">
+                <button><i class="fas fa-check"></i></button>
+                <button (click)="stopEditing(i, 'sequence')"><i class="fas fa-times"></i></button>
+              </div>
+            </div>
+            <div class="editable-field">
+              <span class="text-light-gray">Rodzaj dawki (doseRateType):</span>
+              <div class="dose-content" *ngIf="!editing[i].doseRateType">
+                <span *ngIf="medicament?.dosageInstruction[0]?.doseAndRate[0]?.doseRateType">{{ medicament.dosageInstruction[0].doseAndRate[0].doseRateType[0] }}</span>
+                <span *ngIf="!medicament?.dosageInstruction[0]?.doseAndRate[0]?.doseRateType"><i class="text-light-gray">Nie ustawiono</i></span>
+                <button (click)="startEditing(i, 'doseRateType')"><i class="fas fa-pencil-alt"></i></button>
+             </div>
+    
+              <div class="dose-textarea" *ngIf="editing[i].doseRateType">
+                <input #inputDoseRate type="text" />
+                <button><i class="fas fa-check"></i></button>
+                <button (click)="stopEditing(i, 'doseRateType')"><i class="fas fa-times"></i></button>
+              </div>
+            </div>
+            <div class="editable-field">
+              <span class="text-light-gray">Ilość dawki:</span>
+              <div class="dose-content" *ngIf="!editing[i].doseQuantity">
+                <span  *ngIf="medicament?.dosageInstruction[0]?.doseAndRate[0]?.doseQuantity">{{ medicament?.dosageInstruction[0]?.doseAndRate[0]?.doseQuantity }}</span>
+                <span *ngIf="
+                  !medicament?.dosageInstruction[0]?.doseAndRate[0]?.doseQuantity
+                ">
+                  <i class="text-light-gray">Nie ustawiono</i>
+                </span>
+                <button  (click)="startEditing(i, 'doseQuantity')"><i class="fas fa-pencil-alt"></i></button>
+              </div>
+    
+              <div class="dose-textarea" *ngIf="editing[i].doseQuantity">
+                <input #inputDose type="text" />
+                <button><i class="fas fa-check"></i></button>
+                <button (click)="stopEditing(i, 'doseQuantity')"><i class="fas fa-times"></i></button>
+              </div> 
+            </div>
+          <!-- </div> -->
+        </div>
+      </div>
+      <div class="date-container">
+        <p>Wybierz przedział czasowy</p>
+        <div>
+          <mat-form-field>
+            <mat-label>Data od</mat-label>
+            <input matInput [matDatepicker]="dateFromMed" disabled (dateChange)="changeDateFrom($event)">
+            <mat-datepicker-toggle matSuffix [for]="dateFromMed"></mat-datepicker-toggle>
+            <mat-datepicker #dateFromMed disabled="false"></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field>
+            <mat-label>Data do</mat-label>
+            <input matInput [matDatepicker]="dateToMed" disabled (dateChange)="changeDateTo($event)">
+            <mat-datepicker-toggle matSuffix [for]="dateToMed"></mat-datepicker-toggle>
+            <mat-datepicker #dateToMed disabled="false"></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
   </mat-tab>
 </mat-tab-group>
