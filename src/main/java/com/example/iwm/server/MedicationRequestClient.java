@@ -10,9 +10,11 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Dosage;
 import org.hl7.fhir.r4.model.MedicationRequest;
+import org.hl7.fhir.r4.model.Timing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -66,14 +68,23 @@ public class MedicationRequestClient {
         if (dto.getDosageInstruction() != null) {
             DosageInstructionDTO dosageDto = dto.getDosageInstruction().get(0);
             if(dosageDto.getSequence() != null) {
+                if(medicationRequest.hasDosageInstruction() || medicationRequest.getDosageInstruction().size() < 1) {
+                    medicationRequest.setDosageInstruction(new ArrayList<>());
+                    medicationRequest.getDosageInstruction().add(new Dosage());
+                }
                 medicationRequest.getDosageInstruction().get(0).setSequence(Integer.valueOf(dosageDto.getSequence()));
             }
-            if(dosageDto.getFrequency() != null) {
-                medicationRequest.getDosageInstruction().get(0).getTiming().getRepeat().setFrequency(Integer.valueOf(dosageDto.getFrequency()));
-            }
-            if(dosageDto.getPeriod() != null) {
-                medicationRequest.getDosageInstruction().get(0).getTiming().getRepeat().setPeriod(Integer.valueOf(dosageDto.getPeriod()));
-            }
+//                if(!medicationRequest.getDosageInstruction().get(0).hasTiming()){
+//                    medicationRequest.getDosageInstruction().get(0).setTiming(new Timing());
+//                    medicationRequest.getDosageInstruction().get(0).getTiming().setRepeat(new Timing.TimingRepeatComponent());
+//                }
+                if (dosageDto.getFrequency() != null) {
+                    medicationRequest.getDosageInstruction().get(0).getTiming().getRepeat().setFrequency(Integer.valueOf(dosageDto.getFrequency()));
+                }
+                if (dosageDto.getPeriod() != null) {
+                    medicationRequest.getDosageInstruction().get(0).getTiming().getRepeat().setPeriod(Integer.valueOf(dosageDto.getPeriod()));
+                }
+            
         }
 
         medicationRequest.setAuthoredOn(new Date());
