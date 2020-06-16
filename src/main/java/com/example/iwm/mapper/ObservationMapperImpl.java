@@ -14,12 +14,12 @@ public class ObservationMapperImpl implements IObservationMapper {
     @Override
     public ObservationDTO fromObservation(Observation observation) {
         ObservationDTO observationDTO = new ObservationDTO();
-        observationDTO.setId(observation.getIdElement().getIdPart());
-        observationDTO.setVersion(observation.getIdElement().getVersionIdPart());
-        observationDTO.setCode(observation.getCode().getCodingFirstRep().getCode());
-        observationDTO.setDate(simpleDateFormat.format(observation.getIssued()));
-        observationDTO.setPatientId(observation.getSubject().getReference());
-        observationDTO.setValue(observation.getValueQuantity().getValue().toString());
+        observationDTO.setId(observation.hasIdElement() ? observation.getIdElement().getIdPart() : null);
+        observationDTO.setVersion(observation.hasIdElement() ? observation.getIdElement().getVersionIdPart() : null);
+        observationDTO.setCode(observation.hasCode() ? observation.getCode().getCodingFirstRep().getCode() : null);
+        observationDTO.setDate(observation.hasIssued() ? simpleDateFormat.format(observation.getIssued()) : null);
+        observationDTO.setPatientId(observation.hasSubject() ? observation.getSubject().getReference() : null);
+        observationDTO.setValue(observation.hasValue() ? observation.getValueQuantity().getValue().toString() : null);
         return observationDTO;
     }
 }

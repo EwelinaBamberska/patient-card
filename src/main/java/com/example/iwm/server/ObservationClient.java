@@ -1,12 +1,19 @@
 package com.example.iwm.server;
 
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.gclient.IQuery;
+import com.example.iwm.model.ObservationDTO;
+import com.example.iwm.model.ObservationType;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.Observation;
+import org.hl7.fhir.instance.model.api.IIdType;
+import org.hl7.fhir.r4.model.*;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -14,6 +21,7 @@ public class ObservationClient {
 
     private final IClient client;
     private final CustomServer server = new CustomServer();
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public ObservationClient(){
         client = new Client<Observation>(Observation.class);
@@ -49,5 +57,39 @@ public class ObservationClient {
                 .execute();
 
         return client.readObjectsFromBundle(results);
+    }
+
+    public ObservationDTO createNewObservation(ObservationDTO observationDTO) {
+        Observation observation = new Observation();
+        observation.addIdentifier().setSystem("urn:system").setValue("12345");
+        observation.getCode()
+                .addCoding()
+                    .setCode(ObservationType.WEIGHT.getCode())
+                    .setDisplay("Body weight")
+                    .setSystem("http://localhost:8081");
+        observation.setValue(new Quantity()
+                .setValue(new BigDecimal(observationDTO.getValue()))
+                .setUnit("kg")
+                .setSystem("http://unitsofmeasure.org")
+                .setCode("kg"));
+        observation.setSubject(new Reference("Patient/" + observationDTO.getPatientId()));
+
+        try {
+            observation.setIssued(simpleDateFormat.parse(observationDTO.getDate()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        MethodOutcome outcome = server.getClient().create()
+                .resource(observation)
+                .prettyPrint()
+                .encodedJson()
+                .execute();
+
+        IIdType id = outcome.getId();
+        ObservationDTO dto = new ObservationDTO();
+        dto.setId(id.getIdPart());
+        dto.setVersion(id.getVersionIdPart());
+        return dto;
     }
 }

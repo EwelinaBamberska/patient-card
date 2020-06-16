@@ -1,10 +1,16 @@
 package com.example.iwm.server;
 
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.gclient.IQuery;
+import com.example.iwm.mapper.IMedicationRequestMapper;
+import com.example.iwm.model.DosageInstructionDTO;
+import com.example.iwm.model.MedicationRequestDTO;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Dosage;
 import org.hl7.fhir.r4.model.MedicationRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,8 +20,11 @@ public class MedicationRequestClient {
 
     private final IClient client;
     private final CustomServer server = new CustomServer();
+    private final IMedicationRequestMapper mapper;
 
-    public MedicationRequestClient(){
+    @Autowired
+    public MedicationRequestClient(IMedicationRequestMapper mapper){
+        this.mapper = mapper;
         client = new Client<MedicationRequest>(MedicationRequest.class);
     }
 
@@ -47,6 +56,24 @@ public class MedicationRequestClient {
                 .execute();
 
         return client.readObjectsFromBundle(results);
+    }
+
+    public MedicationRequestDTO updateMedicationRequest(MedicationRequestDTO dto) {
+        MedicationRequest medicationRequest = getResourceById(dto.getId());
+
+        if (dto.getDosageInstruction() != null) {
+            MedicationRequest updated = mapper.fromMedicationRequestDTO(dto);
+            medicationRequest.getDosageInstruction().clear();
+            medicationRequest.getDosageInstruction().addAll(updated.getDosageInstruction());
+        }
+
+        MethodOutcome outcome = server.getClient().update()
+                .resource(medicationRequest)
+                .execute();
+        MedicationRequestDTO result = new MedicationRequestDTO();
+        result.setId(outcome.getId().getIdPart());
+        result.setVersion(outcome.getId().getVersionIdPart());
+        return result;
     }
 
 }

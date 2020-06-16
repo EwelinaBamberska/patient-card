@@ -12,7 +12,7 @@ public class MedicationRequestDTO {
     private String requester;
     private String patientId;
     private String creationDate;
-    private List<DosageInstructionDTO> dosageInstructionDTOList = new ArrayList<>();
+    private List<DosageInstructionDTO> dosageInstruction = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -78,11 +78,11 @@ public class MedicationRequestDTO {
         this.creationDate = creationDate;
     }
 
-    public List<DosageInstructionDTO> getDosageInstructionDTOList() {
-        return dosageInstructionDTOList;
+    public List<DosageInstructionDTO> getDosageInstruction() {
+        return dosageInstruction;
     }
 
-    public void setDosageInstructionDTOList(List<DosageInstructionDTO> dosageInstructionDTOList) {
-        this.dosageInstructionDTOList = dosageInstructionDTOList;
+    public void setDosageInstruction(List<DosageInstructionDTO> dosageInstruction) {
+        this.dosageInstruction = dosageInstruction;
     }
 }
