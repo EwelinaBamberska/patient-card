@@ -181,27 +181,36 @@ export class UserDetailsComponent implements OnInit {
   }
 
   acceptEdit(obj: IMedicament, i, value, newProperty) {
-    // console.log("old", {obj, value, newProperty})
-    // let newObj = Object.assign({}, obj);//obj;
+
+    // if( !obj.dosageInstruction || obj.dosageInstruction.length === 0 ) {
+    //   let newDosage = {};
+    //   if( value === "doseRateType" ) {
+    //     newDosage['doseAndRate'] = [{ 'doseRateType': [newProperty] }];
+    //   } else if( value === "doseQuantity" ) {
+    //     newDosage['doseAndRate'] = [{ 'doseQuantity': newProperty }];
+    //   } else {
+    //     newDosage[value] = newProperty;
+    //     newDosage['doseAndRate'] = [];
+    //   }
+
+    //   obj.dosageInstruction = [];
+    //   obj.dosageInstruction.push(newDosage);
+    // } else if( value !== "doseRateType" && value !== "doseQuantity" ) {
+    //   obj.dosageInstruction[0][value] = newProperty;
+    // } else if ( value === "doseRateType" ) {
+    //   obj.dosageInstruction[0]['doseAndRate'] = [{ 'doseRateType': [newProperty] }];
+    // } else if( value === "doseQuantity" ) {
+    //   obj.dosageInstruction[0]['doseAndRate'] = [{ 'doseQuantity': newProperty }];
+    // }
+
     if( !obj.dosageInstruction || obj.dosageInstruction.length === 0 ) {
       let newDosage = {};
-      if( value === "doseRateType" ) {
-        newDosage['doseAndRate'] = [{ 'doseRateType': [newProperty] }];
-      } else if( value === "doseQuantity" ) {
-        newDosage['doseAndRate'] = [{ 'doseQuantity': newProperty }];
-      } else {
-        newDosage[value] = newProperty;
-        newDosage['doseAndRate'] = [];
-      }
+      newDosage[value] = newProperty;
 
       obj.dosageInstruction = [];
       obj.dosageInstruction.push(newDosage);
-    } else if( value !== "doseRateType" && value !== "doseQuantity" ) {
+    } else {
       obj.dosageInstruction[0][value] = newProperty;
-    } else if ( value === "doseRateType" ) {
-      obj.dosageInstruction[0]['doseAndRate'] = [{ 'doseRateType': [newProperty] }];
-    } else if( value === "doseQuantity" ) {
-      obj.dosageInstruction[0]['doseAndRate'] = [{ 'doseQuantity': newProperty }];
     }
     
     this.editing[i][value] = false;
@@ -212,10 +221,9 @@ export class UserDetailsComponent implements OnInit {
     }
 
     console.log(dataToSend)
-    // this.service.editMedication(dataToSend).subscribe(res => {
-    //   console.log(res);
-    // })
-    // console.log("new", {obj, value, newProperty})
+    this.service.editMedication(dataToSend).subscribe(res => {
+      console.log(res);
+    })
   }
 
   round(num) {
