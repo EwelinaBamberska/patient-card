@@ -13,6 +13,7 @@ import org.hl7.fhir.r4.model.MedicationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -50,6 +51,7 @@ public class MedicationRequestClient {
         } else if(!date_to.equals("")) {
             query.where(MedicationRequest.AUTHOREDON.beforeOrEquals().day(date_to));
         }
+
         Bundle results = query
                 .returnBundle(Bundle.class)
                 .encodedJson()
@@ -74,6 +76,7 @@ public class MedicationRequestClient {
             }
         }
 
+        medicationRequest.setAuthoredOn(new Date());
         MethodOutcome outcome = server.getClient().update()
                 .resource(medicationRequest)
                 .execute();

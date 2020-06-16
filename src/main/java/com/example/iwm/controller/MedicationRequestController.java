@@ -3,6 +3,7 @@ package com.example.iwm.controller;
 import com.example.iwm.mapper.IMedicationRequestMapper;
 import com.example.iwm.model.MedicationRequestDTO;
 import com.example.iwm.model.PatientDTO;
+import com.example.iwm.model.VersionDTO;
 import com.example.iwm.server.MedicationRequestClient;
 import com.google.gson.Gson;
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,7 @@ public class MedicationRequestController {
     private final MedicationRequestClient medicationRequestClient;
     private final IMedicationRequestMapper medicationRequestMapper;
     private final Gson gson = new Gson();
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
     public MedicationRequestController(MedicationRequestClient client, IMedicationRequestMapper medicationRequestMapper) {
@@ -65,10 +68,11 @@ public class MedicationRequestController {
     public String getVersions(@PathVariable("id") String patient_id) {
         MedicationRequest resource = medicationRequestClient.getResourceById(patient_id);
         int versions = Integer.valueOf(resource.getIdElement().getVersionIdPart());
-        List<Integer> versionsNumbers = new ArrayList<>();
+        List<VersionDTO> v = new ArrayList<>();
         for (int i = 1; i <= versions; i++) {
-            versionsNumbers.add(i);
+            MedicationRequest tmp = medicationRequestClient.getResourceByIdAndVersion(patient_id, String.valueOf(i));
+            v.add(new VersionDTO(simpleDateFormat.format(tmp.getAuthoredOn()), tmp.getIdElement().getVersionIdPart(), tmp.getIdElement().getIdPart()));
         }
-        return gson.toJson(versionsNumbers);
+        return gson.toJson(v);
     }
 }
