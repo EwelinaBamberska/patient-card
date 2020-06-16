@@ -124,6 +124,7 @@ export class UserDetailsComponent implements OnInit {
       // this.parseToChartData(res);
       this.medicaments = res;
       this.editing = [];
+      this.versions = [];
       res.forEach(r => {
         this.editing.push({
           frequence: false,
@@ -133,6 +134,12 @@ export class UserDetailsComponent implements OnInit {
           doseRateType: false,
           doseQuantity: false
         })
+
+        this.service.getVersions(r.id).subscribe((version: IVersion[]) => {
+          this.versions.push(version)
+          this.actualVersionIds.push(version[version.length - 1].version);
+          // console.log("VER", version)
+        });
       })
     });
   }
@@ -145,6 +152,7 @@ export class UserDetailsComponent implements OnInit {
       // this.parseToChartData(res);
       this.medicaments = res;
       this.editing = [];
+      this.versions = [];
       res.forEach(r => {
         this.editing.push({
           frequence: false,
@@ -154,6 +162,12 @@ export class UserDetailsComponent implements OnInit {
           doseRateType: false,
           doseQuantity: false
         })
+
+        this.service.getVersions(r.id).subscribe((version: IVersion[]) => {
+          this.versions.push(version)
+          this.actualVersionIds.push(version[version.length - 1].version);
+          // console.log("VER", version)
+        });
       })
     });
   }
@@ -237,7 +251,6 @@ export class UserDetailsComponent implements OnInit {
       this.service.getVersions(obj.id).subscribe((versions: IVersion[]) => {
         this.versions[i] = versions;
         this.actualVersionIds[i] = versions[versions.length - 1].version;
-        // console.log("VER", version)
       });
     })
   }

@@ -114,3 +114,27 @@ h4 {
   letter-spacing: 0.2px;
   color: darkgrey;
 }
+
+.version {
+  button {
+    background: none;
+    border: none;
+    color: #199ed8;
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+    padding: 10px 0;
+    font-size: 16px;
+    outline: none;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+
+  &.active {
+    button {
+      text-decoration: underline;
+    }
+  }
+}

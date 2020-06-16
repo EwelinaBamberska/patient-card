@@ -164,10 +164,10 @@
             </div> -->
           <!-- </div> -->
           <h4>Wersje</h4>
-          <div class="version" *ngFor="let version of versions[i]">
+          <div class="version" *ngFor="let version of versions[i]" [ngClass]="{'active': version.version === actualVersionIds[i]}">
             <button (click)="changeVersion(medicament, version, i )">
               Wersja {{ version.version }} &ndash; {{ version.creationDate }} 
-              <span *ngIf="version.version === actualVersionIds[i]"> --- aktywna</span>
+              <!-- <span *ngIf="version.version === actualVersionIds[i]"> --- aktywna</span> -->
             </button>
           </div>
         </div>
