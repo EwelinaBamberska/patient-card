@@ -49,12 +49,12 @@ public class MedicationRequestMapperImpl implements IMedicationRequestMapper {
 
     private Dosage toDosage(DosageInstructionDTO dosageDTO) {
         Dosage dosage = new Dosage();
-        List<DoseAndRateDTO> doses = dosageDTO.getDoseAndRate();
+//        List<DoseAndRateDTO> doses = dosageDTO.getDoseAndRate();
 
-        for (DoseAndRateDTO dose : doses) {
-            Dosage.DosageDoseAndRateComponent mDosage = new Dosage.DosageDoseAndRateComponent();
-            mDosage.setDose(dose.getDoseQuantity() != null ? new Quantity().setValue(new BigDecimal(dose.getDoseQuantity())) : null);
-        }
+//        for (DoseAndRateDTO dose : doses) {
+//            Dosage.DosageDoseAndRateComponent mDosage = new Dosage.DosageDoseAndRateComponent();
+//            dosage.setDoseAndRate(dose.getDoseQuantity() != null ? new Quantity().setValue(new BigDecimal(dose.getDoseQuantity())) : null);
+//        }
 
         dosage.getTiming().getRepeat().setFrequency(Integer.valueOf(dosageDTO.getFrequency()))
                 .setPeriod(new BigDecimal(dosageDTO.getPeriod()));

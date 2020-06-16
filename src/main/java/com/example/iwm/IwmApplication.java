@@ -11,13 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class IwmApplication {
 
     public static void main(String[] args) {
-
         SpringApplication.run(IwmApplication.class, args);
-
-//        Client client = new Client<Patient>(Patient.class);
-//        Patient patient = (Patient) client.getResourceById("A");
-//
-//        System.out.println(patient.getNameFirstRep().getFamily());
     }
 
 }
