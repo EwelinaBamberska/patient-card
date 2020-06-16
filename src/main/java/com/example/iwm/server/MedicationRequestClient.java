@@ -13,6 +13,7 @@ import org.hl7.fhir.r4.model.MedicationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -50,6 +51,7 @@ public class MedicationRequestClient {
         } else if(!date_to.equals("")) {
             query.where(MedicationRequest.AUTHOREDON.beforeOrEquals().day(date_to));
         }
+
         Bundle results = query
                 .returnBundle(Bundle.class)
                 .encodedJson()
@@ -62,14 +64,23 @@ public class MedicationRequestClient {
         MedicationRequest medicationRequest = getResourceById(dto.getId());
 
         if (dto.getDosageInstruction() != null) {
-            MedicationRequest updated = mapper.fromMedicationRequestDTO(dto);
-            medicationRequest.getDosageInstruction().clear();
-            medicationRequest.getDosageInstruction().addAll(updated.getDosageInstruction());
+            DosageInstructionDTO dosageDto = dto.getDosageInstruction().get(0);
+            if(dosageDto.getSequence() != null) {
+                medicationRequest.getDosageInstruction().get(0).setSequence(Integer.valueOf(dosageDto.getSequence()));
+            }
+            if(dosageDto.getFrequency() != null) {
+                medicationRequest.getDosageInstruction().get(0).getTiming().getRepeat().setFrequency(Integer.valueOf(dosageDto.getFrequency()));
+            }
+            if(dosageDto.getPeriod() != null) {
+                medicationRequest.getDosageInstruction().get(0).getTiming().getRepeat().setPeriod(Integer.valueOf(dosageDto.getPeriod()));
+            }
         }
 
+        medicationRequest.setAuthoredOn(new Date());
         MethodOutcome outcome = server.getClient().update()
                 .resource(medicationRequest)
                 .execute();
+
         MedicationRequestDTO result = new MedicationRequestDTO();
         result.setId(outcome.getId().getIdPart());
         result.setVersion(outcome.getId().getVersionIdPart());

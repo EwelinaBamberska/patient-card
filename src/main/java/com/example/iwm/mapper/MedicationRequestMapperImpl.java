@@ -6,7 +6,6 @@ import com.example.iwm.model.MedicationRequestDTO;
 import org.hl7.fhir.r4.model.*;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -35,31 +34,6 @@ public class MedicationRequestMapperImpl implements IMedicationRequestMapper {
         }
 
         return dto;
-    }
-
-    @Override
-    public MedicationRequest fromMedicationRequestDTO(MedicationRequestDTO dto) {
-        MedicationRequest medicationRequest = new MedicationRequest();
-        medicationRequest.getDosageInstruction().clear();
-        for(DosageInstructionDTO dosageDTO : dto.getDosageInstruction()) {
-            medicationRequest.getDosageInstruction().add(toDosage(dosageDTO));
-        }
-        return medicationRequest;
-    }
-
-    private Dosage toDosage(DosageInstructionDTO dosageDTO) {
-        Dosage dosage = new Dosage();
-//        List<DoseAndRateDTO> doses = dosageDTO.getDoseAndRate();
-
-//        for (DoseAndRateDTO dose : doses) {
-//            Dosage.DosageDoseAndRateComponent mDosage = new Dosage.DosageDoseAndRateComponent();
-//            dosage.setDoseAndRate(dose.getDoseQuantity() != null ? new Quantity().setValue(new BigDecimal(dose.getDoseQuantity())) : null);
-//        }
-
-        dosage.getTiming().getRepeat().setFrequency(Integer.valueOf(dosageDTO.getFrequency()))
-                .setPeriod(new BigDecimal(dosageDTO.getPeriod()));
-        dosage.setSequence(Integer.valueOf(dosageDTO.getSequence()));
-        return dosage;
     }
 
     private DosageInstructionDTO toDosageInstructionDTO(Dosage d) {
