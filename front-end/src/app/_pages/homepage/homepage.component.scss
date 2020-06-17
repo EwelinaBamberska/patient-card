@@ -1,0 +1,58 @@
+@import "../../../assets/scss/variables.scss";
+
+.search {
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid $color-border-bottom;
+  padding: 20px 0;
+  align-items: center;
+
+  i {
+    color: $color-light-gray;
+    flex-grow: 0;
+    flex-shrink: 0;
+    font-size: 25px;
+    padding: 0 20px 0 10px;
+  }
+
+  input {
+    width: 100%;
+    background: none;
+    border: none;
+    font-size: 30px;
+    color: #313131;
+  }
+}
+
+::placeholder {
+  color: $color-light-gray;
+  opacity: 1;
+}
+
+.result {
+  a {
+    color: black;
+    text-decoration: none;
+    margin: 0;
+    padding: 0;
+    background: #e2e2e2;
+    border-radius: 5px;
+    padding: 15px;
+    display: block;
+    margin: 20px 0;
+    transition: 0.2s;
+  }
+
+  a:hover {
+    background: #efefef;
+  }
+
+  p {
+    margin: 0 0 8px;
+  }
+
+  span {
+    color: #888888;
+    font-size: 14px;
+  }
+}

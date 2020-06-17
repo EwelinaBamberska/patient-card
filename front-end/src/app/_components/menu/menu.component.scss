@@ -1,0 +1,15 @@
+@import "../../../assets/scss/variables.scss";
+
+.menu {
+  padding: 20px 0;
+  border-bottom: 1px solid $color-border-bottom;
+}
+
+a {
+  color: $color-black;
+  text-decoration: none;
+}
+
+a.active-link {
+  color: $color-blue;
+}
