@@ -125,6 +125,7 @@ export class UserDetailsComponent implements OnInit {
       this.medicaments = res;
       this.editing = [];
       this.versions = [];
+      this.actualVersionIds = [];
       res.forEach(r => {
         this.editing.push({
           frequence: false,
@@ -153,6 +154,7 @@ export class UserDetailsComponent implements OnInit {
       this.medicaments = res;
       this.editing = [];
       this.versions = [];
+      this.actualVersionIds = [];
       res.forEach(r => {
         this.editing.push({
           frequence: false,
@@ -180,9 +182,10 @@ export class UserDetailsComponent implements OnInit {
         date: this.convertDateToString(this.addWeightForm.get('date').value),
         value: this.addWeightForm.get('weight').value
       }
+      console.log("dodawana waga", data)
 
       this.service.addWeight(data).subscribe(res => {
-        console.log(res);
+        console.log("otrzymana waga", res);
 
         this.lineChartData[0].data.push(
           this.round(parseFloat(data.value))
@@ -256,9 +259,7 @@ export class UserDetailsComponent implements OnInit {
   }
 
   changeVersion(medicament: IMedicament, version: IVersion, i: number) {
-    console.log({medicament, version});
     this.service.getMedicamentByVersion(medicament.id, version.version).subscribe((res: any) => {
-      console.log(res);
       this.medicaments[i] = res;
       this.actualVersionIds[i] = version.version;
 
